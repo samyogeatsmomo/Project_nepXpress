@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Create Shipment - NepXpress</title>
-  <link rel="stylesheet" href="create-shipment.css" />
+  <link rel="stylesheet" href="/static/create-shipment.css" />
 </head>
 <body>
 
@@ -255,11 +255,11 @@
 <script>
   // ── NAVIGATION ──────────────────────────────────────────
   // Change these hrefs to your actual page file names
-  document.querySelector('.nav-item:nth-child(1)').href = 'dashboard.html';      // Dashboard
-  document.querySelector('.nav-item:nth-child(2)').href = 'create-shipment.html'; // Create Delivery (this page)
-  document.querySelector('.nav-item:nth-child(3)').href = 'track-shipment.html';  // Track Shipment
-  document.querySelector('.nav-item:nth-child(4)').href = 'history.html';         // History
-  document.querySelector('.nav-item:nth-child(5)').href = 'settings.html';        // Settings
+document.querySelector('.nav-item:nth-child(1)').href = '/dashboard';
+document.querySelector('.nav-item:nth-child(2)').href = '/create-shipment';
+document.querySelector('.nav-item:nth-child(3)').href = '/track-shipment';
+document.querySelector('.nav-item:nth-child(4)').href = '/shipment-history';
+document.querySelector('.nav-item:nth-child(5)').href = '/settings';
 
   // ── DELIVERY OPTION CARDS (click whole card to select) ──
   document.querySelectorAll('.option-card').forEach(function(card) {

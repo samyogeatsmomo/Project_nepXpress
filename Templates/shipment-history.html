@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Shipment History - NepXpress</title>
-  <link rel="stylesheet" href="shipment-history.css" />
+  <link rel="stylesheet" href="/static/shipment-history.css" />
 </head>
 <body>
 
@@ -263,16 +263,14 @@
 </html>
 <script>
   // ── NAVIGATION ──────────────────────────────────────────
-  // Change these hrefs to your actual page file names
-  document.querySelector('.nav-item:nth-child(1)').href = 'dashboard.html';       // Dashboard
-  document.querySelector('.nav-item:nth-child(2)').href = 'create-shipment.html'; // Create Delivery
-  document.querySelector('.nav-item:nth-child(3)').href = 'track-shipment.html';  // Track Shipment
-  document.querySelector('.nav-item:nth-child(4)').href = 'history.html';         // History (this page)
-  document.querySelector('.nav-item:nth-child(5)').href = 'settings.html';        // Settings
-
+document.querySelector('.nav-item:nth-child(1)').href = '/dashboard';
+document.querySelector('.nav-item:nth-child(2)').href = '/create-shipment';
+document.querySelector('.nav-item:nth-child(3)').href = '/track-shipment';
+document.querySelector('.nav-item:nth-child(4)').href = '/shipment-history';
+document.querySelector('.nav-item:nth-child(5)').href = '/settings';
   // ── CREATE NEW SHIPMENT BUTTON ──────────────────────────
   document.querySelector('.btn-primary').addEventListener('click', function() {
-    window.location.href = 'create-shipment.html';
+    window.location.href = '/create-shipment';
   });
 
   // ── FILTER TABS (All / Delivered / In Transit etc.) ─────
