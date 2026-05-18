@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shipment History - NepXpress</title>
+  <link rel="stylesheet" href="shipment-history.css" />
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">⬡</div>
+      <div>
+        <div class="logo-name">NepXpress</div>
+        <div class="logo-sub">Logistics Management</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item">
+        <span class="nav-icon">⊞</span> Dashboard
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">＋</span> Create Delivery
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">◎</span> Track Shipment
+      </a>
+      <a href="#" class="nav-item active">
+        <span class="nav-icon">↺</span> History
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">⚙</span> Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">JD</div>
+      <div>
+        <div class="user-name">John Doe</div>
+        <div class="user-role">Customer</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Shipment History</h1>
+        <p class="page-sub">View and manage all your past deliveries</p>
+      </div>
+      <button class="btn-primary">+ Create New Shipment</button>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-number">48</div>
+        <div class="stat-label">Total Shipments</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">41</div>
+        <div class="stat-label">Delivered</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">4</div>
+        <div class="stat-label">In Transit</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">3</div>
+        <div class="stat-label">Processing</div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-bar">
+      <div class="filter-tabs">
+        <button class="filter-tab active">All</button>
+        <button class="filter-tab">Delivered</button>
+        <button class="filter-tab">In Transit</button>
+        <button class="filter-tab">Processing</button>
+        <button class="filter-tab">Cancelled</button>
+      </div>
+      <div class="filter-right">
+        <div class="search-box">
+          <span class="search-icon">◎</span>
+          <input type="text" placeholder="Search by tracking ID or address..." />
+        </div>
+        <select class="filter-select">
+          <option>All Time</option>
+          <option>Last 7 days</option>
+          <option>Last 30 days</option>
+          <option>Last 3 months</option>
+          <option>This year</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Shipment Table -->
+    <div class="table-card">
+      <table class="shipment-table">
+        <thead>
+          <tr>
+            <th>Tracking ID</th>
+            <th>Recipient</th>
+            <th>Destination</th>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr>
+            <td class="tracking-id">NXP-2849</td>
+            <td>
+              <div class="recipient-name">Sita Rai</div>
+              <div class="recipient-phone">+977 9812345678</div>
+            </td>
+            <td>Kathmandu, Bagmati</td>
+            <td>
+              <div>May 18, 2026</div>
+              <div class="time-sub">2 hours ago</div>
+            </td>
+            <td>Parcel</td>
+            <td>NPR 350</td>
+            <td><span class="badge transit">In Transit</span></td>
+            <td class="actions">
+              <button class="action-btn">Track</button>
+              <button class="action-btn">Details</button>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="tracking-id">NXP-2848</td>
+            <td>
+              <div class="recipient-name">Hari Thapa</div>
+              <div class="recipient-phone">+977 9865432100</div>
+            </td>
+            <td>Pokhara, Gandaki</td>
+            <td>
+              <div>May 18, 2026</div>
+              <div class="time-sub">5 hours ago</div>
+            </td>
+            <td>Document</td>
+            <td>NPR 150</td>
+            <td><span class="badge processing">Processing</span></td>
+            <td class="actions">
+              <button class="action-btn">Track</button>
+              <button class="action-btn">Details</button>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="tracking-id">NXP-2847</td>
+            <td>
+              <div class="recipient-name">Maya Shrestha</div>
+              <div class="recipient-phone">+977 9856781234</div>
+            </td>
+            <td>Lalitpur, Bagmati</td>
+            <td>
+              <div>May 17, 2026</div>
+              <div class="time-sub">1 day ago</div>
+            </td>
+            <td>Electronics</td>
+            <td>NPR 500</td>
+            <td><span class="badge delivered">Delivered</span></td>
+            <td class="actions">
+              <button class="action-btn">Track</button>
+              <button class="action-btn">Details</button>
+              <button class="action-btn">Reorder</button>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="tracking-id">NXP-2846</td>
+            <td>
+              <div class="recipient-name">Bikash Karki</div>
+              <div class="recipient-phone">+977 9841122334</div>
+            </td>
+            <td>Bhaktapur, Bagmati</td>
+            <td>
+              <div>May 16, 2026</div>
+              <div class="time-sub">2 days ago</div>
+            </td>
+            <td>Fragile</td>
+            <td>NPR 350</td>
+            <td><span class="badge delivered">Delivered</span></td>
+            <td class="actions">
+              <button class="action-btn">Track</button>
+              <button class="action-btn">Details</button>
+              <button class="action-btn">Reorder</button>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="tracking-id">NXP-2845</td>
+            <td>
+              <div class="recipient-name">Sunita Gurung</div>
+              <div class="recipient-phone">+977 9878887776</div>
+            </td>
+            <td>Chitwan, Bagmati</td>
+            <td>
+              <div>May 15, 2026</div>
+              <div class="time-sub">3 days ago</div>
+            </td>
+            <td>Clothing</td>
+            <td>NPR 150</td>
+            <td><span class="badge cancelled">Cancelled</span></td>
+            <td class="actions">
+              <button class="action-btn">Details</button>
+              <button class="action-btn danger">Delete</button>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="tracking-id">NXP-2844</td>
+            <td>
+              <div class="recipient-name">Rohan Maharjan</div>
+              <div class="recipient-phone">+977 9800112233</div>
+            </td>
+            <td>Butwal, Lumbini</td>
+            <td>
+              <div>May 14, 2026</div>
+              <div class="time-sub">4 days ago</div>
+            </td>
+            <td>Parcel</td>
+            <td>NPR 500</td>
+            <td><span class="badge delivered">Delivered</span></td>
+            <td class="actions">
+              <button class="action-btn">Track</button>
+              <button class="action-btn">Details</button>
+              <button class="action-btn">Reorder</button>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <span class="page-info">Showing 1–6 of 48 shipments</span>
+      <div class="page-controls">
+        <button class="page-btn" disabled>← Prev</button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <span class="page-dots">...</span>
+        <button class="page-btn">8</button>
+        <button class="page-btn">Next →</button>
+      </div>
+    </div>
+
+  </main>
+
+</body>
+</html>
+<script>
+  // ── NAVIGATION ──────────────────────────────────────────
+  // Change these hrefs to your actual page file names
+  document.querySelector('.nav-item:nth-child(1)').href = 'dashboard.html';       // Dashboard
+  document.querySelector('.nav-item:nth-child(2)').href = 'create-shipment.html'; // Create Delivery
+  document.querySelector('.nav-item:nth-child(3)').href = 'track-shipment.html';  // Track Shipment
+  document.querySelector('.nav-item:nth-child(4)').href = 'history.html';         // History (this page)
+  document.querySelector('.nav-item:nth-child(5)').href = 'settings.html';        // Settings
+
+  // ── CREATE NEW SHIPMENT BUTTON ──────────────────────────
+  document.querySelector('.btn-primary').addEventListener('click', function() {
+    window.location.href = 'create-shipment.html';
+  });
+
+  // ── FILTER TABS (All / Delivered / In Transit etc.) ─────
+  document.querySelectorAll('.filter-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.filter-tab').forEach(function(t) {
+        t.classList.remove('active');
+      });
+      tab.classList.add('active');
+      // TODO: filter table rows based on tab.textContent (connect to backend later)
+    });
+  });
+
+  // ── SEARCH BOX ──────────────────────────────────────────
+  document.querySelector('.search-box input').addEventListener('input', function() {
+    var searchValue = this.value.toLowerCase();
+    var rows = document.querySelectorAll('.shipment-table tbody tr');
+    rows.forEach(function(row) {
+      var text = row.textContent.toLowerCase();
+      if (text.includes(searchValue)) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+    // TODO: replace with backend search/filter API call later
+  });
+
+  // ── TRACK BUTTONS ───────────────────────────────────────
+  document.querySelectorAll('.action-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var row = btn.closest('tr');
+      var trackingId = row.querySelector('.tracking-id').textContent;
+
+      if (btn.textContent === 'Track') {
+        window.location.href = 'track-shipment.html?id=' + trackingId;
+        // TODO: track-shipment page should read the ?id= from URL and look it up
+      }
+
+      if (btn.textContent === 'Details') {
+        alert('Showing details for ' + trackingId);
+        // TODO: window.location.href = 'shipment-detail.html?id=' + trackingId;
+      }
+
+      if (btn.textContent === 'Reorder') {
+        alert('Reordering shipment ' + trackingId + '...');
+        // TODO: prefill create-shipment form with this shipment's data
+        // window.location.href = 'create-shipment.html?reorder=' + trackingId;
+      }
+
+      if (btn.textContent === 'Delete') {
+        var confirm = window.confirm('Are you sure you want to delete ' + trackingId + '?');
+        if (confirm) {
+          row.remove();
+          // TODO: send DELETE request to backend here
+        }
+      }
+    });
+  });
+
+  // ── PAGINATION BUTTONS ──────────────────────────────────
+  document.querySelectorAll('.page-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      if (btn.disabled) return;
+      document.querySelectorAll('.page-btn').forEach(function(b) {
+        b.classList.remove('active');
+      });
+      btn.classList.add('active');
+      // TODO: fetch page from backend using page number
+    });
+  });
+</script>

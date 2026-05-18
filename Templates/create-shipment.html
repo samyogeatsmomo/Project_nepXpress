@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Shipment - NepXpress</title>
+  <link rel="stylesheet" href="create-shipment.css" />
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">⬡</div>
+      <div>
+        <div class="logo-name">NepXpress</div>
+        <div class="logo-sub">Logistics Management</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item">
+        <span class="nav-icon">⊞</span> Dashboard
+      </a>
+      <a href="#" class="nav-item active">
+        <span class="nav-icon">＋</span> Create Delivery
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">◎</span> Track Shipment
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">↺</span> History
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">⚙</span> Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">JD</div>
+      <div>
+        <div class="user-name">John Doe</div>
+        <div class="user-role">Customer</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+    <div class="page-header">
+      <h1 class="page-title">Create Delivery</h1>
+      <p class="page-sub">Fill in the details to send a new package</p>
+    </div>
+
+    <div class="form-grid">
+
+      <!-- Sender Info -->
+      <section class="card">
+        <h2 class="card-title">Sender Information</h2>
+
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" placeholder="Enter sender's full name" />
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" placeholder="+977 98XXXXXXXX" />
+        </div>
+        <div class="form-group">
+          <label>Pickup Address</label>
+          <input type="text" placeholder="Street address, area" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>City</label>
+            <select>
+              <option value="">Select city</option>
+              <option>Kathmandu</option>
+              <option>Lalitpur</option>
+              <option>Bhaktapur</option>
+              <option>Pokhara</option>
+              <option>Chitwan</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>District</label>
+            <input type="text" placeholder="District" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Receiver Info -->
+      <section class="card">
+        <h2 class="card-title">Receiver Information</h2>
+
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" placeholder="Enter receiver's full name" />
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" placeholder="+977 98XXXXXXXX" />
+        </div>
+        <div class="form-group">
+          <label>Delivery Address</label>
+          <input type="text" placeholder="Street address, area" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>City</label>
+            <select>
+              <option value="">Select city</option>
+              <option>Kathmandu</option>
+              <option>Lalitpur</option>
+              <option>Bhaktapur</option>
+              <option>Pokhara</option>
+              <option>Chitwan</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>District</label>
+            <input type="text" placeholder="District" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Package Details -->
+      <section class="card full-width">
+        <h2 class="card-title">Package Details</h2>
+
+        <div class="form-row three-col">
+          <div class="form-group">
+            <label>Package Type</label>
+            <select>
+              <option value="">Select type</option>
+              <option>Document</option>
+              <option>Parcel</option>
+              <option>Fragile</option>
+              <option>Electronics</option>
+              <option>Clothing</option>
+              <option>Food</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Weight (kg)</label>
+            <input type="number" placeholder="0.0" min="0" step="0.1" />
+          </div>
+          <div class="form-group">
+            <label>Estimated Value (NPR)</label>
+            <input type="number" placeholder="0" min="0" />
+          </div>
+        </div>
+
+        <div class="form-row three-col">
+          <div class="form-group">
+            <label>Length (cm)</label>
+            <input type="number" placeholder="0" />
+          </div>
+          <div class="form-group">
+            <label>Width (cm)</label>
+            <input type="number" placeholder="0" />
+          </div>
+          <div class="form-group">
+            <label>Height (cm)</label>
+            <input type="number" placeholder="0" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Special Instructions</label>
+          <textarea placeholder="Handle with care, keep upright, etc."></textarea>
+        </div>
+      </section>
+
+      <!-- Delivery Options -->
+      <section class="card full-width">
+        <h2 class="card-title">Delivery Options</h2>
+
+        <div class="delivery-options">
+          <label class="option-card selected">
+            <input type="radio" name="delivery" value="standard" checked />
+            <div class="option-info">
+              <div class="option-name">Standard Delivery</div>
+              <div class="option-desc">2–4 business days</div>
+            </div>
+            <div class="option-price">NPR 150</div>
+          </label>
+
+          <label class="option-card">
+            <input type="radio" name="delivery" value="express" />
+            <div class="option-info">
+              <div class="option-name">Express Delivery</div>
+              <div class="option-desc">Same day delivery</div>
+            </div>
+            <div class="option-price">NPR 350</div>
+          </label>
+
+          <label class="option-card">
+            <input type="radio" name="delivery" value="overnight" />
+            <div class="option-info">
+              <div class="option-name">Overnight Delivery</div>
+              <div class="option-desc">Next morning by 9 AM</div>
+            </div>
+            <div class="option-price">NPR 500</div>
+          </label>
+        </div>
+      </section>
+
+      <!-- Payment -->
+      <section class="card full-width">
+        <h2 class="card-title">Payment Method</h2>
+
+        <div class="payment-options">
+          <label class="payment-card selected">
+            <input type="radio" name="payment" value="cod" checked />
+            <span class="pay-icon">💵</span>
+            <span>Cash on Delivery</span>
+          </label>
+          <label class="payment-card">
+            <input type="radio" name="payment" value="esewa" />
+            <span class="pay-icon">📱</span>
+            <span>eSewa</span>
+          </label>
+          <label class="payment-card">
+            <input type="radio" name="payment" value="khalti" />
+            <span class="pay-icon">💳</span>
+            <span>Khalti</span>
+          </label>
+          <label class="payment-card">
+            <input type="radio" name="payment" value="bank" />
+            <span class="pay-icon">🏦</span>
+            <span>Bank Transfer</span>
+          </label>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Order Summary + Submit -->
+    <div class="summary-bar">
+      <div class="summary-info">
+        <div class="summary-label">Estimated Total</div>
+        <div class="summary-amount">NPR 150</div>
+      </div>
+      <div class="summary-actions">
+        <button class="btn-outline">Save as Draft</button>
+        <button class="btn-primary">Confirm &amp; Create Shipment</button>
+      </div>
+    </div>
+
+  </main>
+
+</body>
+</html>
+<script>
+  // ── NAVIGATION ──────────────────────────────────────────
+  // Change these hrefs to your actual page file names
+  document.querySelector('.nav-item:nth-child(1)').href = 'dashboard.html';      // Dashboard
+  document.querySelector('.nav-item:nth-child(2)').href = 'create-shipment.html'; // Create Delivery (this page)
+  document.querySelector('.nav-item:nth-child(3)').href = 'track-shipment.html';  // Track Shipment
+  document.querySelector('.nav-item:nth-child(4)').href = 'history.html';         // History
+  document.querySelector('.nav-item:nth-child(5)').href = 'settings.html';        // Settings
+
+  // ── DELIVERY OPTION CARDS (click whole card to select) ──
+  document.querySelectorAll('.option-card').forEach(function(card) {
+    card.addEventListener('click', function() {
+      document.querySelectorAll('.option-card').forEach(function(c) {
+        c.classList.remove('selected');
+      });
+      card.classList.add('selected');
+    });
+  });
+
+  // ── PAYMENT CARDS (click whole card to select) ──────────
+  document.querySelectorAll('.payment-card').forEach(function(card) {
+    card.addEventListener('click', function() {
+      document.querySelectorAll('.payment-card').forEach(function(c) {
+        c.classList.remove('selected');
+      });
+      card.classList.add('selected');
+    });
+  });
+
+  // ── SAVE AS DRAFT BUTTON ────────────────────────────────
+  document.querySelector('.btn-outline').addEventListener('click', function() {
+    alert('Shipment saved as draft!');
+    // TODO: send draft data to your backend here
+  });
+
+  // ── CONFIRM & CREATE SHIPMENT BUTTON ───────────────────
+  document.querySelector('.btn-primary').addEventListener('click', function() {
+    // Simple check: make sure key fields are not empty
+    var senderName = document.querySelectorAll('input[type="text"]')[0].value;
+    var receiverName = document.querySelectorAll('input[type="text"]')[3].value;
+
+    if (senderName === '' || receiverName === '') {
+      alert('Please fill in sender and receiver names before submitting.');
+      return;
+    }
+
+    alert('Shipment created successfully! Redirecting to history...');
+    // TODO: collect all form data and POST to your backend, then redirect
+    // window.location.href = 'history.html';
+  });
+</script>
