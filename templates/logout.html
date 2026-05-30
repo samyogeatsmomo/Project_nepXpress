@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NepXpress – Logout Confirmation</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}"/>
+  <style>
+    .logout-card {
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .logout-icon {
+      width: 80px;
+      height: 80px;
+      background: #fee;
+      border: 2px solid #c33;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 24px;
+      font-size: 40px;
+    }
+
+    .logout-heading {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--light-text);
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .logout-text {
+      font-size: 15px;
+      color: var(--light-muted);
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    .logout-divider {
+      height: 1px;
+      background: var(--light-border);
+      margin: 28px 0;
+    }
+
+    .password-section {
+      text-align: left;
+    }
+
+    .button-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .btn-cancel {
+      height: 50px;
+      background: #f2f4f8;
+      color: var(--light-text);
+      border: 1.5px solid var(--light-border);
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-cancel:hover {
+      background: #e8ecf4;
+      border-color: #d0d4de;
+    }
+
+    .btn-logout {
+      height: 50px;
+      background: #c33;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .btn-logout:hover {
+      background: #b22;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(204, 51, 51, 0.2);
+    }
+
+    .btn-logout:active {
+      transform: scale(0.98);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ LEFT PANEL ══════════════════════════════════════════ -->
+  <aside class="left-panel">
+
+    <div class="brand">
+      <div class="brand-icon">
+        <img src="\static\mainlogo.png" alt="NepXpress Logo" class="brand-logo"/>
+      </div>
+      <div class="brand-text">
+        <div class="brand-name">NepXpress</div>
+        <div class="brand-sub-text">Logistics & Delivery</div>
+      </div>
+    </div>
+
+    <div class="project-description">
+      <div class="project-description-title">About NepXpress</div>
+      <div class="project-description-text">
+        NepXpress is Nepal's leading logistics and delivery management platform. We connect customers with professional delivery agents to ensure fast, safe, and reliable shipment services. Whether you're sending packages across Kathmandu or nationwide, we've got you covered with real-time tracking, secure handling, and transparent pricing.
+      </div>
+    </div>
+
+    <div class="features">
+
+      <div class="feature">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        </div>
+        <div class="feature-content">
+          <div class="feature-title">Fast Delivery</div>
+          <div class="feature-desc">Real-time logistics network</div>
+        </div>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="3"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+        </div>
+        <div class="feature-content">
+          <div class="feature-title">Live Tracking</div>
+          <div class="feature-desc">Know your delivery status</div>
+        </div>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        </div>
+        <div class="feature-content">
+          <div class="feature-title">Secure Handling</div>
+          <div class="feature-desc">Professional delivery agents</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="copyright">© 2026 nepXpress. All rights reserved.</div>
+  </aside>
+
+  <!-- ══ RIGHT PANEL ══════════════════════════════════════════ -->
+  <main class="right-panel">
+    <!-- ══ FLASH MESSAGES ══ -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            <span>{{ message }}</span>
+            <button onclick="this.parentElement.style.display='none';">×</button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="logout-card">
+
+      <div class="logout-icon">⚠️</div>
+
+      <h1 class="logout-heading">Logout?</h1>
+      <p class="logout-text">
+        Are you sure you want to logout from your account? Enter your password to confirm.
+      </p>
+
+      <!-- ════════════════════════════════════════════
+           LOGOUT CONFIRMATION FORM
+      ════════════════════════════════════════════ -->
+      <form method="POST" action="{{ url_for('auth.logout') }}" class="password-section">
+
+        <!-- Password Field -->
+        <div class="field">
+          <label class="field-label" for="password">Enter Your Password</label>
+          <div class="input-wrap">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <input 
+              type="password" 
+              id="password" 
+              name="password" 
+              placeholder="Enter your password"
+              required 
+              autocomplete="current-password"
+              autofocus
+            />
+          </div>
+        </div>
+
+        <div class="logout-divider"></div>
+
+        <!-- Buttons -->
+        <div class="button-group">
+          <a href="{{ url_for('dashboard') }}" class="btn-cancel">Cancel</a>
+          <button type="submit" class="btn-logout">Logout</button>
+        </div>
+
+      </form>
+
+    </div>
+  </main>
+
+  <button class="help-btn">?</button>
+
+  <!-- ══════════════════════════════════════════
+       CLEAR OLD FLASH MESSAGES ON PAGE LOAD
+  ══════════════════════════════════════════ -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const alerts = document.querySelectorAll('.alert');
+      alerts.forEach(alert => {
+        alert.style.display = 'none';
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -17,6 +17,11 @@ class Authroutes:
             self.controller.register
         )
         
+        # Register logout route (accepts GET and POST methods)
+        self.bp.route("/logout", methods=["GET", "POST"])(
+            self.controller.logout
+        )
+        
         # Register settings route
         self.bp.route("/settings", methods=["GET", "POST"])(
             self.controller.settings
