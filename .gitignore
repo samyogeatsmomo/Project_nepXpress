@@ -4,3 +4,4 @@ __pycache__/
 venv/
 ven/
 .env
+config.py
