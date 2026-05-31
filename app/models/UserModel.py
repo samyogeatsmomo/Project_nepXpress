@@ -16,28 +16,32 @@ class User(BaseModel):
     """
 
     table = "users"
-
+    
     def __init__(self, name="", email="", password="", role="customer"):
         self.id = None
         self.name = name
         self.email = email
         self.__password = password
         self.role = role
+        self.__security_answer = security_answer  # plain text, hashed on save
         self.created_at = None
-
-    # ── Teammate's methods (untouched) ───────────────────────────────── #
-
+    
+    
     def save(self):
-        """Save user to database with hashed password."""
+        """Save user to database with hashed password"""
         db = Database()
+        
+        # Hash the password before saving
         hashed_password = generate_password_hash(self.__password)
+        
         query = (
             f"INSERT INTO {self.table} (name, email, password, role) "
             f"VALUES (%s, %s, %s, %s)"
         )
         db.execute(query, (self.name, self.email, hashed_password, self.role))
         db.close()
-
+    
+    
     def update(self):
         """Update user in database."""
         db = Database()
@@ -61,7 +65,8 @@ class User(BaseModel):
         self.name = name
         self.email = email
         self.update()
-
+    
+    
     def email_exists(self):
         """Check if email already exists in database."""
         db = Database()

@@ -62,12 +62,13 @@ def create_app():
             return redirect(url_for("dashboard"))
         return redirect(url_for("auth.login"))
 
-    # ── PROTECTED (teammate's routes — untouched) ────────────────────────── #
+    # ── PROTECTED ───────────────────────────────────────────
 
     @app.route("/dashboard")
     @login_required
     @no_cache
     def dashboard():
+        
         return render_template("dashboard.html")
 
     @app.route("/create-shipment")
@@ -84,13 +85,56 @@ def create_app():
         get_flashed_messages()
         return render_template("shipment-history.html")
 
-    @app.route("/settings")
+    @app.route("/settings", methods=["GET", "POST"])
     @login_required
     @no_cache
     def settings():
-        get_flashed_messages()
-        return render_template("settings.html")
+        user_email = session.get("user_email")
+        user = User(email=user_email)
 
+        if request.method == "POST":
+            form_type = request.form.get("form_type", "")
+
+            if form_type == "profile":
+                name = request.form.get("name", "").strip()
+                phone = request.form.get("phone", "").strip()
+                address = request.form.get("address", "").strip()
+                if not name:
+                    flash("Name cannot be empty.", "danger")
+                    return redirect(url_for("settings"))
+                user.update_profile_info(name, phone, address)
+                session["user_name"] = name  # keep sidebar/greeting in sync
+                flash("Profile updated successfully!", "success")
+                return redirect(url_for("settings"))
+
+            if form_type == "password":
+                current = request.form.get("current_password", "").strip()
+                new = request.form.get("new_password", "").strip()
+                confirm = request.form.get("confirm_password", "").strip()
+                if not current or not new or not confirm:
+                    flash("Please fill in all password fields.", "danger")
+                    return redirect(url_for("settings"))
+                if not user.check_password(current):
+                    flash("Current password is incorrect.", "danger")
+                    return redirect(url_for("settings"))
+                if new != confirm:
+                    flash("New passwords do not match.", "danger")
+                    return redirect(url_for("settings"))
+                if len(new) < 6:
+                    flash("Password must be at least 6 characters.", "danger")
+                    return redirect(url_for("settings"))
+                user.update_password(new)
+                flash("Password updated successfully!", "success")
+                return redirect(url_for("settings"))
+
+        get_flashed_messages()
+        user_data = user.find_by("email", user_email)
+        return render_template(
+            "settings.html",
+            user=user_data,
+            user_name=session.get("user_name"),
+            user_role=session.get("user_role")
+        )
     @app.route("/admin-dashboard")
     @login_required
     @no_cache
@@ -123,6 +167,42 @@ def create_app():
                 return render_template("logout.html")
             session.clear()
             flash("You have been logged out successfully.", "success")
+            return redirect(url_for("auth.login"))
+        
+    @app.route("/forgot-password", methods=["GET", "POST"])
+    def forgot_password():
+            if request.method == "GET":
+                return render_template("forgot-password.html")
+
+            email = request.form.get("email", "").strip()
+            security_answer = request.form.get("security_answer", "").strip()
+            new_password = request.form.get("new_password", "").strip()
+            confirm_password = request.form.get("confirm_password", "").strip()
+
+            if not email or not security_answer or not new_password or not confirm_password:
+                flash("All fields are required.", "danger")
+                return render_template("forgot-password.html")
+
+            if new_password != confirm_password:
+                flash("Passwords do not match.", "danger")
+                return render_template("forgot-password.html")
+
+            if len(new_password) < 6:
+                flash("Password must be at least 6 characters.", "danger")
+                return render_template("forgot-password.html")
+
+            user = User(email=email)
+            user_data = user.find_by("email", email)
+            if not user_data:
+                flash("No account found with that email.", "danger")
+                return render_template("forgot-password.html")
+
+            if not user.check_security_answer(security_answer):
+                flash("Incorrect security answer. Please try again.", "danger")
+                return render_template("forgot-password.html")
+
+            user.update_password(new_password)
+            flash("Password reset successful! Please login with your new password.", "success")
             return redirect(url_for("auth.login"))
 
     @app.errorhandler(404)
