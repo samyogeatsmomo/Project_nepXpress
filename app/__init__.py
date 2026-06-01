@@ -56,6 +56,8 @@ def create_app():
     # Register authentication routes (login, register, settings)
     auth_routes = Authroutes()
     app.register_blueprint(auth_routes.login())
+    from app.controllers.shipmentcontroller import shipment
+    app.register_blueprint(shipment)
 
     
     # ========== PUBLIC ROUTES (No authentication required) ==========

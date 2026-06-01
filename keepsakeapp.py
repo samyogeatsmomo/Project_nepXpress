@@ -13,6 +13,7 @@ def hello(name):
 @app.errorhandler(404)
 def error(e):
     return render_template("error.html")
+
 @app.route("/about")
 def about():
     return render_template("about.html")
