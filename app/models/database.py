@@ -1,14 +1,25 @@
 import pymysql
+import pymysql.cursors
 from werkzeug.security import generate_password_hash
+import sys
+import os
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+import config
 
 
 class Database:
+    """
+    Teammate's Database class — kept intact.
+    Credentials now read from config.py / .env instead of being hardcoded.
+    """
+
     def __init__(self):
         self.connection = pymysql.connect(
-            host="localhost",
-            user="root",
-            password="root1234",
-            database="nepXpress",
+            host=config.MYSQL_HOST,
+            user=config.MYSQL_USER,
+            password=config.MYSQL_PASSWORD,
+            database=config.MYSQL_DATABASE,
             charset='utf8mb4'
         )
 
@@ -37,72 +48,98 @@ class Database:
 
     @staticmethod
     def create_tables():
+        """
+        Expanded to create all 4 tables NepXpress needs.
+        Teammate's original users table is preserved exactly.
+        """
         db = Database()
 
-        # ── users table (unchanged) ───────────────────────────
+        # ── users (teammate's original, untouched) ───────────────────── #
         db.execute(
             "CREATE TABLE IF NOT EXISTS users ("
-            "  id            INT PRIMARY KEY AUTO_INCREMENT,"
-            "  name          VARCHAR(100)  NOT NULL,"
-            "  email         VARCHAR(100)  NOT NULL UNIQUE,"
-            "  password      VARCHAR(255)  NOT NULL,"
-            "  role          VARCHAR(20)   NOT NULL DEFAULT 'customer',"
-            "  created_at    TIMESTAMP     DEFAULT CURRENT_TIMESTAMP"
+            "id INT PRIMARY KEY AUTO_INCREMENT,"
+            "name VARCHAR(100) NOT NULL,"
+            "email VARCHAR(100) NOT NULL UNIQUE,"
+            "password VARCHAR(255) NOT NULL,"
+            "role VARCHAR(20) NOT NULL DEFAULT 'customer',"
+            "status VARCHAR(20) NOT NULL DEFAULT 'active',"
+            "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
             ")"
         )
 
-        # Insert default admin user
+        # ── delivery_agents ──────────────────────────────────────────── #
+        db.execute(
+            "CREATE TABLE IF NOT EXISTS delivery_agents ("
+            "id INT PRIMARY KEY AUTO_INCREMENT,"
+            "name VARCHAR(120) NOT NULL,"
+            "email VARCHAR(180) NOT NULL UNIQUE,"
+            "phone VARCHAR(20),"
+            "status ENUM('active','inactive','offline') NOT NULL DEFAULT 'active',"
+            "zone VARCHAR(100),"
+            "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,"
+            "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+            ")"
+        )
+
+        # ── shipments ────────────────────────────────────────────────── #
+        db.execute(
+            "CREATE TABLE IF NOT EXISTS shipments ("
+            "id INT PRIMARY KEY AUTO_INCREMENT,"
+            "tracking_id VARCHAR(30) NOT NULL UNIQUE,"
+            "customer_id INT NOT NULL,"
+            "agent_id INT,"
+            "destination VARCHAR(200) NOT NULL,"
+            "status ENUM('pending','processing','in_transit','delivered','delayed','cancelled')"
+            "  NOT NULL DEFAULT 'pending',"
+            "amount DECIMAL(12,2) NOT NULL DEFAULT 0.00,"
+            "notes TEXT,"
+            "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,"
+            "updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,"
+            "FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE CASCADE,"
+            "FOREIGN KEY (agent_id) REFERENCES delivery_agents(id) ON DELETE SET NULL"
+            ")"
+        )
+
+        # ── system_alerts ────────────────────────────────────────────── #
+        db.execute(
+            "CREATE TABLE IF NOT EXISTS system_alerts ("
+            "id INT PRIMARY KEY AUTO_INCREMENT,"
+            "type ENUM('warning','info','success','error') NOT NULL DEFAULT 'info',"
+            "title VARCHAR(200) NOT NULL,"
+            "message TEXT,"
+            "reference_id VARCHAR(50),"
+            "is_read TINYINT(1) NOT NULL DEFAULT 0,"
+            "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            ")"
+        )
+
+        # ── seed admin user ──────────────────────────────────────────── #
         admin_password = generate_password_hash("admin123")
         db.execute(
-            "INSERT IGNORE INTO users (name, email, password, role) "
-            "VALUES (%s, %s, %s, %s)",
+            "INSERT IGNORE INTO users (name, email, password, role) VALUES (%s, %s, %s, %s)",
             ("Admin", "admin@admin.com", admin_password, "admin")
-        )
-
-        # ── orders table (new) ────────────────────────────────
-        # customer_id is a FK → users.id but nullable so guest
-        # orders are also possible in the future.
-        db.execute(
-            "CREATE TABLE IF NOT EXISTS orders ("
-            "  id                   INT PRIMARY KEY AUTO_INCREMENT,"
-            "  tracking_number      VARCHAR(20)   NOT NULL UNIQUE,"
-            "  customer_id          INT           DEFAULT NULL,"
-
-            # Sender
-            "  sender_name          VARCHAR(100)  NOT NULL,"
-            "  sender_phone         VARCHAR(20)   NOT NULL,"
-            "  sender_address       VARCHAR(255)  NOT NULL,"
-            "  sender_city          VARCHAR(100)  NOT NULL,"
-            "  sender_district      VARCHAR(100)  NOT NULL,"
-
-            # Receiver
-            "  receiver_name        VARCHAR(100)  NOT NULL,"
-            "  receiver_phone       VARCHAR(20)   NOT NULL,"
-            "  receiver_address     VARCHAR(255)  NOT NULL,"
-            "  receiver_city        VARCHAR(100)  NOT NULL,"
-            "  receiver_district    VARCHAR(100)  NOT NULL,"
-
-            # Package
-            "  package_type         VARCHAR(50)   NOT NULL,"
-            "  weight               DECIMAL(8,2)  NOT NULL DEFAULT 0.00,"
-            "  estimated_value      DECIMAL(10,2) NOT NULL DEFAULT 0.00,"
-            "  length               DECIMAL(8,2)  NOT NULL DEFAULT 0.00,"
-            "  width                DECIMAL(8,2)  NOT NULL DEFAULT 0.00,"
-            "  height               DECIMAL(8,2)  NOT NULL DEFAULT 0.00,"
-            "  special_instructions TEXT          DEFAULT NULL,"
-
-            # Delivery & Payment
-            "  delivery_option      VARCHAR(20)   NOT NULL DEFAULT 'standard',"
-            "  payment_method       VARCHAR(20)   NOT NULL DEFAULT 'cod',"
-            "  delivery_fee         DECIMAL(8,2)  NOT NULL DEFAULT 150.00,"
-
-            # Status & timestamps
-            "  status               VARCHAR(30)   NOT NULL DEFAULT 'pending',"
-            "  created_at           TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,"
-
-            "  FOREIGN KEY (customer_id) REFERENCES users(id) ON DELETE SET NULL"
-            ")"
         )
 
         db.close()
         print("✅ Database tables created successfully!")
+
+
+# ── Standalone query helper (used by your admin controllers) ─────────────── #
+def execute_query(query, params=None, fetchone=False, fetchall=False):
+    """
+    Used by ShipmentModel, DeliveryAgentModel, AlertModel, and dashboard
+    controllers. Keeps those models clean without Database() boilerplate.
+    """
+    db = Database()
+    try:
+        with db.connection.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute(query, params or ())
+            if fetchone:
+                return cursor.fetchone()
+            if fetchall:
+                return cursor.fetchall()
+            db.connection.commit()
+            return cursor.lastrowid if cursor.lastrowid else cursor.rowcount
+    finally:
+        db.close()
+        

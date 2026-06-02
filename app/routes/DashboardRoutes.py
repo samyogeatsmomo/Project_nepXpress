@@ -1,18 +1,24 @@
 from flask import Blueprint
-from app.controllers.shipmentcontrollers import ShipmentController
-class Shipmentroutes:
+from app.controllers.AdminDashboardController import DashboardController
+
+
+class Dashboardroutes:
     def __init__(self):
-        self.bp=Blueprint("shipment",__name__)
-        self.controller=ShipmentController()
-    
-    def shipment(self):
-    
-        self.bp.route("/create-shipment", methods=["GET", "POST"])(
-                self.controller.create_shipment
+        self.bp = Blueprint("dashboard", __name__)
+        self.controller = DashboardController()
+
+    def dashboard(self):
+        self.bp.add_url_rule(
+            "/dashboard",
+            endpoint="dashboard",
+            view_func=self.controller.dashboard,
+            methods=["GET", "POST"]
         )
-        self.bp.route("/shipment-history", methods=["GET", "POST"])(
-                self.controller.shipment_history
+        self.bp.add_url_rule(
+            "/admin-dashboard",
+            endpoint="admin-dashboard",
+            view_func=self.controller.admin_dashboard,
+            methods=["GET", "POST"]
         )
-        
+      
         return self.bp
-    

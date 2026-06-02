@@ -6,7 +6,6 @@
   <title>Create Shipment - NepXpress</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="{{ url_for('static', filename='common.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='admin-dashboard.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='create-shipment.css') }}" />
   <style>
     /* Flash messages */
@@ -23,11 +22,29 @@
 </head>
 <body>
 
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+          <span>{{ message }}</span>
+          <button onclick="this.parentElement.style.display='none';">×</button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
   <!-- ── SIDEBAR: left navigation panel ── -->
   <aside class="sidebar">
     <div class="sidebar-brand">
-      <img src="{{ url_for('static', filename='logo.png') }}" alt="NepXpress" class="sidebar-logo" />
-      <span class="sidebar-tagline">Logistics Management</span>
+      <div class="brand">
+        <div class="brand-icon">
+          <img src="{{ url_for('static', filename='mainlogo.png') }}" alt="NepXpress Logo" class="brand-logo"/>
+        </div>
+        <div class="brand-text">
+          <div class="brand-name">NepXpress</div>
+          <div class="brand-sub-text">Logistics & Delivery</div>
+        </div>
+      </div>
     </div>
 
     <nav class="sidebar-nav">
@@ -55,10 +72,10 @@
 
     <!-- Logged-in user shown at the bottom of the sidebar -->
     <div class="sidebar-user">
-      <div class="user-avatar">JD</div>
+      <div class="user-avatar">{{ (user_name[0] if user_name else 'U') | upper }}</div>
       <div class="user-info">
-        <span class="user-name">John Doe</span>
-        <span class="user-role">Customer</span>
+        <span class="user-name">{{ user_name if user_name else 'User' }}</span>
+        <span class="user-role">{{ user_role | capitalize if user_role else 'Customer' }}</span>
       </div>
     </div>
   </aside>
@@ -77,93 +94,62 @@
     </header>
 
     <main class="content">
-
-      <!-- Flash messages from Flask backend -->
-      {%- with messages = get_flashed_messages(with_categories=true) %}
-        {%- if messages %}
-          <div class="flash-list">
-            {%- for category, message in messages %}
-              <div class="flash flash-{{ category }}">{{ message }}</div>
-            {%- endfor %}
-          </div>
-        {%- endif %}
-      {%- endwith %}
-
-      <!-- All inputs POST to /create-shipment -->
-      <form id="shipmentForm"
-            action="/create-shipment"
-            method="POST"
-            novalidate>
-
-      <!-- form-grid: 2-column layout -->
+      <form method="POST" action="{{ url_for('create_shipment') }}">
+      <!-- form-grid: 2-column layout; full-width cards span both columns -->
       <div class="form-grid">
 
-        <!-- CARD 1: Sender -->
+        <!-- CARD 1: Who is sending the package -->
         <section class="card">
           <h2 class="card-title">Sender Information</h2>
           <div class="form-group">
             <label>Full Name</label>
-            <input type="text" id="senderName" name="sender_name" placeholder="Enter sender's full name" value="{{ form_data.sender_name if form_data else '' }}" required />
+            <input type="text" id="senderName" name="sender_name" placeholder="Enter sender's full name" required />
           </div>
           <div class="form-group">
             <label>Phone Number</label>
-            <input type="tel" name="sender_phone" placeholder="+977 98XXXXXXXX" value="{{ form_data.sender_phone if form_data else '' }}" required />
+            <input type="tel" name="sender_phone" placeholder="+977 98XXXXXXXX" />
           </div>
           <div class="form-group">
             <label>Pickup Address</label>
-            <input type="text" name="sender_address" placeholder="Street address, area" value="{{ form_data.sender_address if form_data else '' }}" required />
+            <input type="text" name="sender_address" placeholder="Street address, area" />
           </div>
           <!-- City and District side by side -->
           <div class="form-row">
             <div class="form-group">
               <label>City</label>
-              <select name="sender_city" required>
-                <option value="">Select city</option>
-                <option>Kathmandu</option>
-                <option>Lalitpur</option>
-                <option>Bhaktapur</option>
-                <option>Pokhara</option>
-                <option>Chitwan</option>
-              </select>
+              <input type="text" name="sender_city" placeholder="Enter city" />
             </div>
             <div class="form-group">
               <label>District</label>
-              <input type="text" name="sender_district" required placeholder="District" />
+              <input type="text" name="sender_district" placeholder="District" />
             </div>
           </div>
         </section>
 
-        <!-- CARD 2: Receiver -->
+        <!-- CARD 2: Who is receiving the package -->
         <section class="card">
           <h2 class="card-title">Receiver Information</h2>
           <div class="form-group">
             <label>Full Name</label>
-            <input type="text" id="receiverName" name="receiver_name" placeholder="Enter receiver's full name" value="{{ form_data.receiver_name if form_data else '' }}" required />
+            <input type="text" id="receiverName" name="receiver_name" placeholder="Enter receiver's full name" required />
           </div>
           <div class="form-group">
             <label>Phone Number</label>
-            <input type="tel" name="receiver_phone" placeholder="+977 98XXXXXXXX" value="{{ form_data.receiver_phone if form_data else '' }}" required />
+            <input type="tel" name="receiver_phone" placeholder="+977 98XXXXXXXX" />
           </div>
           <div class="form-group">
             <label>Delivery Address</label>
-            <input type="text" name="receiver_address" placeholder="Street address, area" value="{{ form_data.receiver_address if form_data else '' }}" required />
+            <input type="text" name="receiver_address" placeholder="Street address, area" />
           </div>
           <!-- City and District side by side -->
           <div class="form-row">
             <div class="form-group">
               <label>City</label>
-              <select name="receiver_city" required>
-                <option value="">Select city</option>
-                <option>Kathmandu</option>
-                <option>Lalitpur</option>
-                <option>Bhaktapur</option>
-                <option>Pokhara</option>
-                <option>Chitwan</option>
-              </select>
+              <input type="text" name="receiver_city" placeholder="Enter city" />
             </div>
             <div class="form-group">
               <label>District</label>
-              <input type="text" name="receiver_district" placeholder="District" required />
+              <input type="text" name="receiver_district" placeholder="District" />
             </div>
           </div>
         </section>
@@ -176,7 +162,7 @@
           <div class="form-row three-col">
             <div class="form-group">
               <label>Package Type</label>
-              <select name="package_type" required>
+              <select name="package_type">
                 <option value="">Select type</option>
                 <option>Document</option>
                 <option>Parcel</option>
@@ -188,11 +174,11 @@
             </div>
             <div class="form-group">
               <label>Weight (kg)</label>
-              <input type="number" name="weight" placeholder="0.0" min="0" step="0.1" required />
+              <input type="number" name="weight" placeholder="0.0" min="0" step="0.1" />
             </div>
             <div class="form-group">
               <label>Estimated Value (NPR)</label>
-              <input type="number" name="estimated_value" placeholder="0" min="0" />
+              <input type="number" name="value" placeholder="0" min="0" />
             </div>
           </div>
 
@@ -200,22 +186,22 @@
           <div class="form-row three-col">
             <div class="form-group">
               <label>Length (cm)</label>
-              <input type="number" name="length" placeholder="0" required />
+              <input type="number" name="length" placeholder="0" />
             </div>
             <div class="form-group">
               <label>Width (cm)</label>
-              <input type="number" name="width" placeholder="0" required />
+              <input type="number" name="width" placeholder="0" />
             </div>
             <div class="form-group">
               <label>Height (cm)</label>
-              <input type="number" name="height" placeholder="0" required />
+              <input type="number" name="height" placeholder="0" />
             </div>
           </div>
 
           <!-- Free text for any special handling notes -->
           <div class="form-group">
             <label>Special Instructions</label>
-            <textarea name="special_instructions" placeholder="Handle with care, keep upright, etc.">{{ form_data.special_instructions if form_data else '' }}</textarea>
+            <textarea name="instructions" placeholder="Handle with care, keep upright, etc."></textarea>
           </div>
         </section>
 
@@ -223,27 +209,27 @@
         <section class="card full-width">
           <h2 class="card-title">Delivery Options</h2>
           <div class="delivery-options">
-            <label class="option-card selected">
-              <input type="radio" name="delivery" value="standard" checked />
+            <label class="option-card">
+              <input type="radio" name="delivery_type" value="Standard" checked />
               <div class="option-info">
                 <div class="option-name">Standard Delivery</div>
-                <div class="option-desc">2–4 business days</div>
+                <div class="option-desc">3–5 business days</div>
               </div>
               <div class="option-price">NPR 150</div>
             </label>
             <label class="option-card">
-              <input type="radio" name="delivery" value="express" />
+              <input type="radio" name="delivery_type" value="Express" />
               <div class="option-info">
                 <div class="option-name">Express Delivery</div>
-                <div class="option-desc">Same day delivery</div>
+                <div class="option-desc">1–2 business days</div>
               </div>
               <div class="option-price">NPR 350</div>
             </label>
             <label class="option-card">
-              <input type="radio" name="delivery" value="overnight" />
+              <input type="radio" name="delivery_type" value="Same-day" />
               <div class="option-info">
-                <div class="option-name">Overnight Delivery</div>
-                <div class="option-desc">Next morning by 9 AM</div>
+                <div class="option-name">Same-day Delivery</div>
+                <div class="option-desc">Delivered today</div>
               </div>
               <div class="option-price">NPR 500</div>
             </label>
@@ -254,142 +240,55 @@
         <section class="card full-width">
           <h2 class="card-title">Payment Method</h2>
           <div class="payment-options">
-            <label class="payment-card selected">
-              <input type="radio" name="payment" value="cod" checked />
+            <label class="payment-card">
+              <input type="radio" name="payment_method" value="cod" checked />
               <span class="pay-icon">💵</span>
               <span>Cash on Delivery</span>
             </label>
             <label class="payment-card">
-              <input type="radio" name="payment" value="esewa" />
+              <input type="radio" name="payment_method" value="esewa" disabled />
               <span class="pay-icon">📱</span>
-              <span>eSewa</span>
+              <span>eSewa (coming soon)</span>
             </label>
             <label class="payment-card">
-              <input type="radio" name="payment" value="khalti" />
+              <input type="radio" name="payment_method" value="khalti" disabled />
               <span class="pay-icon">💳</span>
-              <span>Khalti</span>
+              <span>Khalti (coming soon)</span>
             </label>
             <label class="payment-card">
-              <input type="radio" name="payment" value="bank" />
+              <input type="radio" name="payment_method" value="bank" disabled />
               <span class="pay-icon">🏦</span>
-              <span>Bank Transfer</span>
+              <span>Bank Transfer (coming soon)</span>
             </label>
           </div>
         </section>
 
       </div>
 
-      </form><!-- /shipmentForm -->
-
-      <!-- ── SUMMARY BAR: total price + action buttons ── -->
+      <!-- ── SUMMARY BAR: total + action button ── -->
       <div class="summary-bar">
         <div class="summary-info">
           <div class="summary-label">Estimated Total</div>
-          <div class="summary-amount">NPR 150</div>
+          <div class="summary-amount" id="totalAmount">NPR 150</div>
         </div>
         <div class="summary-actions">
-          <button class="btn-outline" id="saveDraftBtn">Save as Draft</button>
-          <button class="btn-primary" type="submit" form="shipmentForm" id="confirmBtn">Confirm &amp; Create Shipment</button>
+          <button type="submit" class="btn-primary" id="confirmBtn">Confirm &amp; Create Shipment</button>
         </div>
       </div>
+      </form>
     </main>
   </div>
 
   <!-- Floating help button, bottom-right corner -->
   <button class="help-btn">?</button>
 
-  <!-- ── JAVASCRIPT ── -->
+  <!-- Update the Estimated Total when the delivery option changes -->
   <script>
-    // ── Delivery option highlight ──────────────────────────
-    document.querySelectorAll('.option-card').forEach(function(card) {
-      card.addEventListener('click', function() {
-        document.querySelectorAll('.option-card').forEach(function(c) { c.classList.remove('selected'); });
-        card.classList.add('selected');
+    var prices = { Standard: 150, Express: 350, "Same-day": 500 };
+    document.querySelectorAll('input[name="delivery_type"]').forEach(function(r) {
+      r.addEventListener('change', function() {
+        document.getElementById('totalAmount').textContent = 'NPR ' + prices[r.value];
       });
-    });
-
-    // ── Payment method highlight ───────────────────────────
-    document.querySelectorAll('.payment-card').forEach(function(card) {
-      card.addEventListener('click', function() {
-        document.querySelectorAll('.payment-card').forEach(function(c) { c.classList.remove('selected'); });
-        card.classList.add('selected');
-      });
-    });
-
-    // ── Save draft ─────────────────────────────────────────
-    document.getElementById('saveDraftBtn').addEventListener('click', function() {
-      alert('Shipment saved as draft!');
-    });
-
-    // ── Frontend validation before POST ───────────────────
-    document.getElementById('shipmentForm').addEventListener('submit', function(e) {
-      var errors = [];
-
-      // Fields: [id or name selector, label]
-      var requiredFields = [
-        ['sender_name',       'Sender full name'],
-        ['sender_phone',      'Sender phone number'],
-        ['sender_address',    'Sender pickup address'],
-        ['sender_city',       'Sender city'],
-        ['sender_district',   'Sender district'],
-        ['receiver_name',     'Receiver full name'],
-        ['receiver_phone',    'Receiver phone number'],
-        ['receiver_address',  'Receiver delivery address'],
-        ['receiver_city',     'Receiver city'],
-        ['receiver_district', 'Receiver district'],
-        ['package_type',      'Package type'],
-        ['weight',            'Package weight'],
-        ['length',            'Package length'],
-        ['width',             'Package width'],
-        ['height',            'Package height'],
-      ];
-
-      requiredFields.forEach(function(pair) {
-        var field = document.querySelector('[name="' + pair[0] + '"]');
-        if (!field || field.value.trim() === '' || field.value === '') {
-          errors.push(pair[1] + ' is required.');
-          if (field) field.classList.add('input-error');
-        } else {
-          if (field) field.classList.remove('input-error');
-        }
-      });
-
-      // Numeric must be > 0
-      ['weight', 'length', 'width', 'height'].forEach(function(name) {
-        var field = document.querySelector('[name="' + name + '"]');
-        if (field && field.value && parseFloat(field.value) <= 0) {
-          errors.push(name.charAt(0).toUpperCase() + name.slice(1) + ' must be greater than 0.');
-          field.classList.add('input-error');
-        }
-      });
-
-      if (errors.length > 0) {
-        e.preventDefault();
-        // Show inline error banner
-        var existing = document.getElementById('jsErrorBanner');
-        if (existing) existing.remove();
-
-        var banner = document.createElement('div');
-        banner.id = 'jsErrorBanner';
-        banner.className = 'flash-list';
-        errors.forEach(function(msg) {
-          var d = document.createElement('div');
-          d.className = 'flash flash-error';
-          d.textContent = msg;
-          banner.appendChild(d);
-        });
-
-        // Insert banner at top of content
-        var content = document.querySelector('.content');
-        content.insertBefore(banner, content.firstChild);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    });
-
-    // Clear error highlight on input change
-    document.querySelectorAll('input, select, textarea').forEach(function(el) {
-      el.addEventListener('input', function() { this.classList.remove('input-error'); });
-      el.addEventListener('change', function() { this.classList.remove('input-error'); });
     });
   </script>
 

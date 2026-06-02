@@ -12,12 +12,6 @@ class Shipmentroutes:
         self.bp.route("/shipment-history", methods=["GET", "POST"])(
             self.controller.shipment_history
         )
-        self.bp.route("/admin-agents", methods=["GET", "POST"])(
-            self.controller.admin_agents
-        )
-        self.bp.route("/admin-users", methods=["GET", "POST"])(
-            self.controller.admin_users
-        )
         return self.bp
     
 

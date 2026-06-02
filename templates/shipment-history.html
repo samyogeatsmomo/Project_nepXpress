@@ -6,16 +6,22 @@
   <title>Shipment History - NepXpress</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="{{ url_for('static', filename='common.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='admin-dashboard.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='shipment-history.css') }}" />
 </head>
 <body>
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="sidebar-brand">
-      <img src="{{ url_for('static', filename='logo.png') }}" alt="NepXpress" class="sidebar-logo" />
-      <span class="sidebar-tagline">Logistics Management</span>
+<div class="sidebar-brand">
+      <div class="brand">
+        <div class="brand-icon">
+          <img src="{{ url_for('static', filename='mainlogo.png') }}" alt="NepXpress Logo" class="brand-logo"/>
+        </div>
+        <div class="brand-text">
+          <div class="brand-name">NepXpress</div>
+          <div class="brand-sub-text">Logistics & Delivery</div>
+        </div>
+      </div>
     </div>
 
     <nav class="sidebar-nav">
@@ -41,11 +47,11 @@
       </a>
     </nav>
 
-    <div class="sidebar-user">
-      <div class="user-avatar">JD</div>
+<div class="sidebar-user">
+      <div class="user-avatar">{{ (user_name[0] if user_name else 'U') | upper }}</div>
       <div class="user-info">
-        <span class="user-name">John Doe</span>
-        <span class="user-role">Customer</span>
+        <span class="user-name">{{ user_name if user_name else 'User' }}</span>
+        <span class="user-role">{{ user_role | capitalize if user_role else 'Customer' }}</span>
       </div>
     </div>
   </aside>
@@ -66,14 +72,14 @@
     <main class="content">
 
       <!-- PAGE HEADER -->
-      <div class="page-header">
-        <div>
-          <h1 class="page-title">Shipment History</h1>
-          <p class="page-sub">View and manage all your past deliveries</p>
-        </div>
-        <button class="btn-primary" onclick="window.location.href='/create-shipment'">+ Create New Shipment</button>
-      </div>
-
+<!-- PAGE HEADER -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">All Shipments</h1>
+      <p class="page-sub">View and manage all your past deliveries</p>
+    </div>
+    <button class="btn-primary" onclick="window.location.href='/create-shipment'">+ Create New Shipment</button>
+  </div>
       <!-- STATS -->
       <div class="stats-row">
         <div class="stat-card">
