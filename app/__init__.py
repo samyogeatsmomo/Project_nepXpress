@@ -172,9 +172,24 @@ def create_app():
     @login_required
     @no_cache
     def shipment_history():
-        get_flashed_messages()
+        user_id = session.get("user_id")
+
+        # Fetch only this user's shipments, newest first
+        shipment_model = Shipment()
+        orders = shipment_model.find_by_user(user_id)
+
+        # Build stats from the returned list — no extra DB query needed
+        stats = {
+            "total":      len(orders),
+            "delivered":  sum(1 for o in orders if o["status"] == "delivered"),
+            "transit":    sum(1 for o in orders if o["status"] == "in_transit"),
+            "processing": sum(1 for o in orders if o["status"] in ("pending", "processing")),
+        }
+
         return render_template(
             "shipment-history.html",
+            orders=orders,
+            stats=stats,
             user_name=session.get("user_name"),
             user_role=session.get("user_role")
         )

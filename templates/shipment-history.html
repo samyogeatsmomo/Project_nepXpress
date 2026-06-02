@@ -83,19 +83,19 @@
       <!-- STATS -->
       <div class="stats-row">
         <div class="stat-card">
-          <div class="stat-number">48</div>
+          <div class="stat-number">{{ stats.total }}</div>
           <div class="stat-label">Total Shipments</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number">41</div>
+          <div class="stat-number">{{ stats.delivered }}</div>
           <div class="stat-label">Delivered</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number">4</div>
+          <div class="stat-number">{{ stats.transit }}</div>
           <div class="stat-label">In Transit</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number">3</div>
+          <div class="stat-number">{{ stats.processing }}</div>
           <div class="stat-label">Processing</div>
         </div>
       </div>
@@ -141,27 +141,74 @@
           </thead>
           <tbody id="shipmentTableBody">
 
-            <tr data-status="transit">
-              <td class="tracking-id">NXP-2849</td>
-              <td>
-                <div class="recipient-name">Priya Sharma</div>
-                <div class="recipient-phone">+977 9801234567</div>
-              </td>
-              <td>Kathmandu</td>
-              <td>
-                <div>25 May 2026</div>
-                <div class="time-sub">2 hours ago</div>
-              </td>
-              <td>Parcel</td>
-              <td>NPR 350</td>
-              <td><span class="badge transit">In Transit</span></td>
-              <td>
-                <div class="actions">
-                  <button class="action-btn">Track</button>
-                  <button class="action-btn">Details</button>
-                </div>
-              </td>
-            </tr>
+            {% if orders %}
+              {% for order in orders %}
+                {# Map DB status value → CSS badge class and display text #}
+                {% if order.status == 'delivered' %}
+                  {% set badge_class = 'delivered' %}
+                  {% set status_label = 'Delivered' %}
+                {% elif order.status == 'in_transit' %}
+                  {% set badge_class = 'transit' %}
+                  {% set status_label = 'In Transit' %}
+                {% elif order.status == 'cancelled' %}
+                  {% set badge_class = 'cancelled' %}
+                  {% set status_label = 'Cancelled' %}
+                {% elif order.status == 'delayed' %}
+                  {% set badge_class = 'delayed' %}
+                  {% set status_label = 'Delayed' %}
+                {% else %}
+                  {% set badge_class = 'processing' %}
+                  {% set status_label = 'Processing' %}
+                {% endif %}
+
+                <tr data-status="{{ badge_class }}">
+                  <td class="tracking-id">{{ order.tracking_id }}</td>
+                  <td>
+                    <div class="recipient-name">{{ order.receiver_name }}</div>
+                    <div class="recipient-phone">{{ order.receiver_phone }}</div>
+                  </td>
+                  <td>{{ order.receiver_city }}{% if order.receiver_district %}, {{ order.receiver_district }}{% endif %}</td>
+                  <td>
+                    <div>{{ order.created_at.strftime('%d %b %Y') if order.created_at else '—' }}</div>
+                    <div class="time-sub">{{ order.delivery_type }}</div>
+                  </td>
+                  <td>{{ order.package_type if order.package_type else '—' }}</td>
+                  <td>NPR {{ order.estimated_value | int if order.estimated_value else '—' }}</td>
+                  <td><span class="badge {{ badge_class }}">{{ status_label }}</span></td>
+                  <td>
+                    <div class="actions">
+                      <button class="action-btn" onclick="window.location.href='/track-shipment?id={{ order.tracking_id }}'">Track</button>
+                      <button class="action-btn detail-btn"
+                        data-tracking="{{ order.tracking_id }}"
+                        data-receiver="{{ order.receiver_name }}"
+                        data-phone="{{ order.receiver_phone }}"
+                        data-address="{{ order.receiver_address }}, {{ order.receiver_city }}"
+                        data-type="{{ order.package_type }}"
+                        data-weight="{{ order.weight }}"
+                        data-delivery="{{ order.delivery_type }}"
+                        data-payment="{{ order.payment_method | upper }}"
+                        data-status="{{ status_label }}"
+                        data-badge="{{ badge_class }}"
+                        data-date="{{ order.created_at.strftime('%d %b %Y') if order.created_at else '—' }}"
+                        onclick="openDetail(this)">Details</button>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="8" class="empty-state">
+                  <div style="text-align:center; padding:48px 20px; color:#8a93a8;">
+                    <svg viewBox="0 0 24 24" style="width:40px;height:40px;stroke:#d1d5db;fill:none;stroke-width:1.5;display:block;margin:0 auto 12px;">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    </svg>
+                    <p style="font-size:15px;font-weight:600;color:#374151;margin-bottom:6px;">No shipments yet</p>
+                    <p style="font-size:13px;">Your shipment history will appear here once you create one.</p>
+                    <a href="/create-shipment" style="display:inline-block;margin-top:14px;color:#3b82f6;font-weight:600;text-decoration:none;">+ Create your first shipment →</a>
+                  </div>
+                </td>
+              </tr>
+            {% endif %}
 
           </tbody>
         </table>
@@ -169,7 +216,7 @@
 
       <!-- PAGINATION SECTION -->
       <div class="pagination">
-        <div class="page-info">Showing 1–8 of 48 shipments</div>
+        <div class="page-info">Showing {{ orders | length }} of {{ stats.total }} shipment{{ "s" if stats.total != 1 else "" }}</div>
         <div class="page-controls">
           <button class="page-btn" disabled>← Prev</button>
           <button class="page-btn active">1</button>
@@ -184,38 +231,108 @@
 
   <button class="help-btn">?</button>
 
+  <!-- Detail modal -->
+  <div id="detailModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:20px;width:460px;max-width:95vw;box-shadow:0 24px 60px rgba(0,0,0,0.18);overflow:hidden;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid #e2e5eb;">
+        <div>
+          <div style="font-size:17px;font-weight:700;color:#1a1f2e;" id="dm-tracking">—</div>
+          <span class="badge" id="dm-badge" style="margin-top:6px;display:inline-block;">—</span>
+        </div>
+        <button onclick="closeDetail()" style="background:#f4f5f7;border:none;border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:16px;color:#8a93a8;">✕</button>
+      </div>
+      <div style="padding:20px 24px;display:flex;flex-direction:column;gap:14px;">
+        <div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8a93a8;margin-bottom:8px;">Receiver</div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;padding:5px 0;border-bottom:1px solid #f1f5f9;"><span style="color:#8a93a8;">Name</span><strong id="dm-receiver">—</strong></div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;padding:5px 0;border-bottom:1px solid #f1f5f9;"><span style="color:#8a93a8;">Phone</span><strong id="dm-phone">—</strong></div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;padding:5px 0;border-bottom:1px solid #f1f5f9;"><span style="color:#8a93a8;">Address</span><strong id="dm-address" style="text-align:right;max-width:60%;">—</strong></div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8a93a8;margin-bottom:8px;">Package</div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;padding:5px 0;border-bottom:1px solid #f1f5f9;"><span style="color:#8a93a8;">Type</span><strong id="dm-type">—</strong></div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;padding:5px 0;border-bottom:1px solid #f1f5f9;"><span style="color:#8a93a8;">Weight</span><strong id="dm-weight">—</strong></div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8a93a8;margin-bottom:8px;">Delivery</div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;padding:5px 0;border-bottom:1px solid #f1f5f9;"><span style="color:#8a93a8;">Option</span><strong id="dm-delivery">—</strong></div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;padding:5px 0;border-bottom:1px solid #f1f5f9;"><span style="color:#8a93a8;">Payment</span><strong id="dm-payment">—</strong></div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;padding:5px 0;"><span style="color:#8a93a8;">Date</span><strong id="dm-date">—</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // ── FILTER TABS ──
+    var currentFilter = 'all';
+
+    // ── FILTER TABS ───────────────────────────────────────────
     document.querySelectorAll('.filter-tab').forEach(function(tab) {
       tab.addEventListener('click', function() {
-        document.querySelectorAll('.filter-tab').forEach(function(t) {
-          t.classList.remove('active');
-        });
+        document.querySelectorAll('.filter-tab').forEach(function(t) { t.classList.remove('active'); });
         tab.classList.add('active');
-
-        var filter = tab.getAttribute('data-filter');
-        document.querySelectorAll('#shipmentTableBody tr').forEach(function(row) {
-          if (filter === 'all' || row.getAttribute('data-status') === filter) {
-            row.style.display = '';
-          } else {
-            row.style.display = 'none';
-          }
-        });
+        currentFilter = tab.getAttribute('data-filter');
+        applyFilters();
       });
     });
 
-    // ── SEARCH ──
-    document.getElementById('searchInput').addEventListener('input', function() {
-      var query = this.value.toLowerCase();
-      document.querySelectorAll('#shipmentTableBody tr').forEach(function(row) {
-        var text = row.textContent.toLowerCase();
-        row.style.display = text.includes(query) ? '' : 'none';
-      });
-    });
+    // ── SEARCH ────────────────────────────────────────────────
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
 
-    // ── CREATE NEW SHIPMENT ──
-    document.querySelector('.btn-primary').addEventListener('click', function() {
-      window.location.href = '/create-shipment';
+    function applyFilters() {
+      var query = document.getElementById('searchInput').value.toLowerCase();
+      var rows   = document.querySelectorAll('#shipmentTableBody tr[data-status]');
+      var visible = 0;
+
+      rows.forEach(function(row) {
+        var matchFilter = (currentFilter === 'all' || row.dataset.status === currentFilter);
+        var matchSearch = (!query || row.textContent.toLowerCase().includes(query));
+        var show = matchFilter && matchSearch;
+        row.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+
+      // show/hide no-results message
+      var noRes = document.getElementById('noResultRow');
+      if (visible === 0 && rows.length > 0) {
+        if (!noRes) {
+          var tr = document.createElement('tr');
+          tr.id = 'noResultRow';
+          tr.innerHTML = '<td colspan="8" style="text-align:center;padding:32px;color:#8a93a8;font-size:14px;">No shipments match your search.</td>';
+          document.getElementById('shipmentTableBody').appendChild(tr);
+        }
+      } else {
+        if (noRes) noRes.remove();
+      }
+    }
+
+    // ── DETAIL MODAL ──────────────────────────────────────────
+    function openDetail(btn) {
+      document.getElementById('dm-tracking').textContent  = btn.dataset.tracking;
+      document.getElementById('dm-receiver').textContent  = btn.dataset.receiver;
+      document.getElementById('dm-phone').textContent     = btn.dataset.phone;
+      document.getElementById('dm-address').textContent   = btn.dataset.address;
+      document.getElementById('dm-type').textContent      = btn.dataset.type;
+      document.getElementById('dm-weight').textContent    = (btn.dataset.weight || '—') + ' kg';
+      document.getElementById('dm-delivery').textContent  = btn.dataset.delivery;
+      document.getElementById('dm-payment').textContent   = btn.dataset.payment;
+      document.getElementById('dm-date').textContent      = btn.dataset.date;
+
+      var badge = document.getElementById('dm-badge');
+      badge.textContent = btn.dataset.status;
+      badge.className   = 'badge ' + btn.dataset.badge;
+
+      var modal = document.getElementById('detailModal');
+      modal.style.display = 'flex';
+    }
+
+    function closeDetail() {
+      document.getElementById('detailModal').style.display = 'none';
+    }
+
+    // Close on overlay click
+    document.getElementById('detailModal').addEventListener('click', function(e) {
+      if (e.target === this) closeDetail();
     });
   </script>
 
